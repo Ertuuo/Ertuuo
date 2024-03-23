@@ -1,19 +1,51 @@
-from flask import Flask
-import random
+# Import / İçe Aktarma
+from flask import Flask, render_template
+
+
 app = Flask(__name__)
-facts_list = ["Teknolojik bağımlılıktan mustarip olan çoğu kişi, kendilerini şebeke kapsama alanı dışında bulduklarında veya cihazlarını kullanamadıkları zaman yoğun stres yaşarlar.", "2018 yılında yapılan bir araştırmaya göre 18-34 yaş arası kişilerin %50'den fazlası kendilerini akıllı telefonlarına bağımlı olarak görüyor.", "Teknolojik bağımlılık çalışması, modern bilimsel araştırmanın en ilgili alanlarından biridir.", "2019'da yapılan bir araştırmaya göre, insanların %60'ından fazlası akıllı telefonlarındaki iş mesajlarına işten ayrıldıktan sonraki 15 dakika içinde yanıt veriyor.", "Teknolojik bağımlılıkla mücadele etmenin bir yolu, zevk veren ve ruh halini iyileştiren faaliyetler aramaktır.", "Elon Musk, sosyal ağların içeriği görüntülemek için mümkün olduğunca fazla zaman harcamamız için bizi platformun içinde tutmak üzere tasarlandığını iddia ediyor.", "Elon Musk ayrıca sosyal ağların düzenlenmesini ve kullanıcıların kişisel verilerinin korunmasını savunmaktadır. Sosyal ağların hakkımızda büyük miktarda bilgi topladığını ve bu bilgilerin daha sonra düşüncelerimizi ve davranışlarımızı manipüle etmek için kullanılabileceğini iddia ediyor.", "Sosyal ağların olumlu ve olumsuz yanları vardır ve bu platformları kullanırken her ikisinin de farkında olmalıyız."]
 
-@app.route("/")
-def merhaba():
-    return f'<h1>Merhaba! sitede <a href="/rastgele_gercek">Rastgele bir gerçeği görüntüleyebilirsiniz!</a>'
+def result_calculate(size, lights, device):
+    # Elektrikli cihazların enerji tüketimini hesaplamaya olanak tanıyan değişkenler
+    home_coef = 100
+    light_coef = 0.04
+    devices_coef = 5   
+    return size * home_coef + lights * light_coef + device * devices_coef 
 
-@app.route("/rastgele_gercek")
-def hello_world():
-    return f'<p>{random.choice(facts_list)}</p>'
-    return f'<a href="/i">Eğer baktıysan şimdide biraz bilgi zamanı!</a>'
+# İlk sayfa
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-@app.route("/i")
-def bilgi():
-    return f'<p>Teknoloji bağımlısı olmamak için önce kendimizi kıısıtlamalıyız, yani sınır koymalıyız. Bazen de olsa egzesiz, spor sohbet ve benzeri şeylerde yapmalıyız. Haydi şimdi birlikte teknoloji bağımlılığına dur diyelim!</p>'
+# İkinci sayfa
+@app.route('/<size>')
+def lights(size):
+    return render_template(
+                            'lights.html', 
+                            size=size
+                           )
+
+# Üçüncü sayfa
+@app.route('/<size>/<lights>')
+def electronics(size, lights):
+    return render_template(
+                            'electronics.html',
+                            size = size, 
+                            lights = lights                           
+                           )
+
+# Hesaplama
+@app.route('/<size>/<lights>/<device>')
+def end(size, lights, device):
+    return render_template('end.html', 
+                            result=result_calculate(int(size),
+                                                    int(lights), 
+                                                    int(device)
+                                                    )
+
+                        )
+@app.route("/reklam")
+def eko():
+    return render_template("rklm.html")
+
 
 app.run(debug=True)
