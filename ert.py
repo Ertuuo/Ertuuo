@@ -1,51 +1,28 @@
-# Import / İçe Aktarma
-from flask import Flask, render_template
+# Import
+from flask import Flask, render_template,request, redirect
+
 
 
 app = Flask(__name__)
 
-def result_calculate(size, lights, device):
-    # Elektrikli cihazların enerji tüketimini hesaplamaya olanak tanıyan değişkenler
-    home_coef = 100
-    light_coef = 0.04
-    devices_coef = 5   
-    return size * home_coef + lights * light_coef + device * devices_coef 
-
-# İlk sayfa
+# İçerik sayfasını çalıştırma
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# İkinci sayfa
-@app.route('/<size>')
-def lights(size):
-    return render_template(
-                            'lights.html', 
-                            size=size
-                           )
 
-# Üçüncü sayfa
-@app.route('/<size>/<lights>')
-def electronics(size, lights):
-    return render_template(
-                            'electronics.html',
-                            size = size, 
-                            lights = lights                           
-                           )
+# Dinamik beceriler
+@app.route('/', methods=['POST'])
+def process_form():
+    button_python = request.form.get('button_python'),
+    button_discord = request.form.get('button_discord'),
+    button_html = request.form.get('button_html'),
+    button_db = request.form.get('button_db')
+    email = request.form.get('email')
+    oneri = request.form.get('oneri')
 
-# Hesaplama
-@app.route('/<size>/<lights>/<device>')
-def end(size, lights, device):
-    return render_template('end.html', 
-                            result=result_calculate(int(size),
-                                                    int(lights), 
-                                                    int(device)
-                                                    )
-
-                        )
-@app.route("/reklam")
-def eko():
-    return render_template("rklm.html")
+    return render_template('index.html', button_python=button_python, button_discord=button_discord, button_html=button_html, button_db=button_db, email=email, oneri=oneri) 
 
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
